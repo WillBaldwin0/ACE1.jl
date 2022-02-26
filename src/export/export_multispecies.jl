@@ -9,16 +9,26 @@ using JuLIP: energy, bulk, i2z, z2i, chemical_symbol
 
 function export_ACE(fname, IP)
     #decomposing into V1, V2, V3 (One body, two body and ACE bases)
-    V1 = IP.components[1]
-    V2 = IP.components[2]
-    V3 = IP.components[3]
+    if length(IP.components) == 3
+        V1 = IP.components[1]
+        V2 = IP.components[2]
+        V3 = IP.components[3]
+    elseif length(IP.components) == 2
+        V1 = IP.components[1]
+        V3 = IP.components[2]
+    else
+        @assert 0
+    end
 
+    #=
     if hasproperty(V2, :basis)
         species = collect(string.(chemical_symbol.(V2.basis.zlist.list.data)))
     else hasproperty(V2, :Vout)
         species = collect(string.(chemical_symbol.(V2.Vout.basis.zlist.list.data)))
     end
+    =#
 
+    species = collect(string.(keys(V1.E0)))
     species_dict = Dict(zip(collect(0:length(species)-1), species))
     reversed_species_dict = Dict(zip(species, collect(0:length(species)-1)))
 
@@ -38,6 +48,8 @@ function export_ACE(fname, IP)
     data["elements"] = elements
     data["E0"] = E0
 
+    #=
+
     if hasproperty(V2, :basis)
         polypairpot = export_polypairpot(V2, reversed_species_dict)
     else hasproperty(V2, :Vin)
@@ -48,6 +60,7 @@ function export_ACE(fname, IP)
 
     data["polypairpot"] = polypairpot
     #creating "data" dict where we'll store everything
+    =#
 
     embeddings, bonds = export_radial_basis(V3, species_dict)
     data["embeddings"] = embeddings
