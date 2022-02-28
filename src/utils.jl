@@ -55,7 +55,8 @@ function pair_basis(; species = :X,
       rin = 0.5 * r0,
       pcut = 2,
       pin = 0,
-      rbasis = transformed_jacobi(maxdeg, trans, rcut, rin; pcut=pcut, pin=pin))
+      ortho_weight_function = x-> 1,
+      rbasis = transformed_jacobi(maxdeg, trans, rcut, rin; pcut=pcut, pin=pin, ortho_weight_function=ortho_weight_function))
 
    return PolyPairBasis(rbasis, species)
 end
