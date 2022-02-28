@@ -215,11 +215,12 @@ end
 
 A utility function to generate a jacobi-type basis
 """
-function discrete_jacobi(N; pcut=0, tcut=1.0, pin=0, tin=-1.0, Nquad = 1000)
+function discrete_jacobi(N; pcut=0, tcut=1.0, pin=0, tin=-1.0, Nquad = 1000, t_weight_func = x->1.0)
    tl, tr = minmax(tin, tcut)
    dt = (tr - tl) / Nquad
-   tdf = range(tl + dt/2, tr - dt/2, length=Nquad)
-   return OrthPolyBasis(N, pcut, tcut, pin, tin, tdf)
+   tdf = collect(range(tl + dt/2, tr - dt/2, length=Nquad))
+   t_weights = convert(Vector{Float64}, t_weight_func.(tdf))
+   return OrthPolyBasis(N, pcut, tcut, pin, tin, tdf, t_weights)
 end
 
 
@@ -322,11 +323,14 @@ a `TransformPolys` basis with an inner polynomial basis of `OrthPolys` type.
 """
 function transformed_jacobi(maxdeg::Integer,
                             trans::DistanceTransform,
-                            rcut::Real, rin::Real = 0.0;
+                            rcut::Real, rin::Real = 0.0; 
+                            ortho_weight_function = x->1,
                             kwargs...)
+   
    J =  discrete_jacobi(maxdeg; tcut = transform(trans, rcut),
                                 tin = transform(trans, rin),
                                 pcut = 2,
+                                t_weight_func = t -> ortho_weight_function(inv_transform(trans, t)),
                                 kwargs...)
    return TransformedPolys(J, trans, rin, rcut)
 end

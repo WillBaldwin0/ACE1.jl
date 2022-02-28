@@ -31,8 +31,9 @@ function rpi_basis(; species = :X, N = 3,
       pcut = 2,
       pin = 0,
       constants = false,
+      ortho_weight_function = x-> 1,
       rbasis = transformed_jacobi(get_maxn(D, maxdeg, species), trans, rcut, rin;
-                                  pcut=pcut, pin=pin),
+                                  pcut=pcut, pin=pin, ortho_weight_function=ortho_weight_function),
       # one-particle basis
       Basis1p = BasicPSH1pBasis,
       basis1p = Basis1p(rbasis; species = species, D = D) )
