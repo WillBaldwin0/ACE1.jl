@@ -51,7 +51,7 @@ function export_ACE(fname, IP)
     #=
 
     if hasproperty(V2, :basis)
-        polypairpot = export_polypairpot(V2, reversed_species_dict)
+        polypairpot = (V2, reversed_species_dict)
     else hasproperty(V2, :Vin)
         polypairpot = export_polypairpot(V2.Vout, reversed_species_dict)
         reppot = export_reppot(V2, reversed_species_dict)
@@ -65,6 +65,8 @@ function export_ACE(fname, IP)
     embeddings, bonds = export_radial_basis(V3, species_dict)
     data["embeddings"] = embeddings
     data["bonds"] = bonds
+
+    # create a dummy radial basis which
 
     functions, lmax = export_ACE_functions(V3, species, reversed_species_dict)
     data["functions"] = functions
